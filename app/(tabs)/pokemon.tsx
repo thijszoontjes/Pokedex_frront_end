@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Image, // 👈 toevoegen
 } from "react-native";
 import { pokemonData, Pokemon } from "@/constants/pokemon";
 
@@ -26,7 +27,8 @@ export default function PokemonScreen() {
           <Text style={styles.idText}>#{id}</Text>
         </View>
 
-        <View style={styles.bgSection} />
+        {/* 👇 plaatje toevoegen */}
+        <Image source={{ uri: item.image }} style={styles.image} />
 
         <View style={styles.cardTextArea}>
           <Text style={styles.name}>{item.name}</Text>
@@ -56,7 +58,6 @@ export default function PokemonScreen() {
 }
 
 const PURPLE = "#7C3AED";
-const LIGHT_PURPLE = "#F3E8FF";
 const CARD_BG = "#FFFFFF";
 
 const styles = StyleSheet.create({
@@ -87,6 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: CARD_BG,
     borderRadius: 16,
     padding: 12,
+    alignItems: "center",
     position: "relative",
 
     shadowColor: "#000",
@@ -110,14 +112,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
   },
-  bgSection: {
-    backgroundColor: LIGHT_PURPLE,
-    borderRadius: 12,
-    aspectRatio: 1.6,
+  image: {
+    width: 80,
+    height: 80,
     marginBottom: 10,
   },
   cardTextArea: {
     gap: 2,
+    alignItems: "center",
   },
   name: {
     fontSize: 18,
