@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   pokemonName: { fontSize: 32, fontWeight: "bold", color: "#0E0940", textTransform: "capitalize" },
   pokemonId: { fontSize: 18, color: "#666", marginTop: 4 },
   favoriteContainer: { marginTop: 12 },
+
   imageContainer: {
     alignItems: "center",
     paddingVertical: 20,

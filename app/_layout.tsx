@@ -63,8 +63,8 @@ function RootLayoutNav() {
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            {/* kies of je [name] of [id] gebruikt, maar niet beide */}
-            <Stack.Screen name="pokemon/[name]" options={{ title: "Pokémon Details" }} />
+            <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
+            <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </Stack>
         </ThemeProvider>
