@@ -1,60 +1,77 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Tabs } from "expo-router";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+const ACTIVE = "#6E44FF";
+const INACTIVE = "#94A3B8";
 
-function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string; }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
     <Tabs
-      initialRouteName="pokemon"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: false,
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: ACTIVE,
+        tabBarInactiveTintColor: INACTIVE,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "700",
+          marginTop: 2,
+          marginBottom: Platform.OS === "ios" ? -2 : 0,
+        },
+        // floating "pill" bar
+        tabBarStyle: {
+          position: "absolute",
+        left: 16, 
+          right: 16,
+          bottom: 12,
+          height: 64,
+          borderRadius: 20,
+          backgroundColor: "#FFFFFFEE",
+          borderTopWidth: 0,
+          // soft shadow
+          shadowColor: "#000",
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 4 },
+          elevation: 10,
+          paddingBottom: Platform.OS === "ios" ? 10 : 8,
+          paddingTop: 6,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
+        },
       }}
     >
+      {/* Pokémons tab (jouw Home) */}
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          title: "Pokémons",
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name="pokeball"
+              size={size ?? 22}
+              color={color}
+              style={{ opacity: focused ? 1 : 0.9 }}
+            />
           ),
         }}
       />
+
+      {/* Favorites tab */}
       <Tabs.Screen
-        name="two"
+        name="favorites"
         options={{
-          title: 'Search',
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="pokemon"
-        options={{
-          title: 'Pokémon',
-          tabBarIcon: ({ color }) => <TabBarIcon name="paw" color={color} />,
+          title: "Favorites",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "heart" : "heart-outline"}
+              size={size ?? 22}
+              color={color}
+              style={{ opacity: focused ? 1 : 0.9 }}
+            />
+          ),
         }}
       />
     </Tabs>
