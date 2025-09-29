@@ -1,89 +1,50 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { pokemonData } from "@/constants/pokemon";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { usePokemonById } from "../hooks/use-pokemon";
+import { PokemonImage } from "../../components/ui/pokemon-image";
 
 export default function PokemonDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
+  const { id } = useLocalSearchParams();
+  const realId = Array.isArray(id) ? id[0] : id;
+  const { data: pokemon, isLoading, error } = usePokemonById(realId || "");
 
-  const pokemon = pokemonData.find((p) => String(p.id) === id);
-
-  if (!pokemon) {
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.error}>Pokémon not found</Text>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>Go Back</Text>
-        </Pressable>
+        <View style={styles.loading}><ActivityIndicator size="large" /><Text>Loading…</Text></View>
       </SafeAreaView>
     );
   }
 
-  const formattedId = String(pokemon.id).padStart(3, "0");
+  if (error || !pokemon) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loading}><Text style={{ color: "red" }}>Pokémon not found</Text></View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>
-        {pokemon.name} #{formattedId}
-      </Text>
-      <View style={styles.typeBadge}>
-        <Text style={styles.typeText}>{pokemon.type}</Text>
-      </View>
-
-      <Pressable onPress={() => router.back()} style={styles.backBtn}>
-        <Text style={styles.backText}>Back</Text>
-      </Pressable>
+      <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.name}>{pokemon.name}</Text>
+          <Text style={styles.sub}>#{String(pokemon.id).padStart(3, "0")}</Text>
+        </View>
+        <View style={styles.imageWrap}>
+          <PokemonImage id={pokemon.id} size={220} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-const PURPLE = "#7C3AED";
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFDE00",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "800",
-    marginBottom: 16,
-  },
-  typeBadge: {
-    backgroundColor: PURPLE,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 999,
-    marginBottom: 20,
-  },
-  typeText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  error: {
-    fontSize: 18,
-    color: "red",
-    marginBottom: 16,
-  },
-  backBtn: {
-    marginTop: 12,
-    backgroundColor: "#222",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  backText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+  container: { flex: 1, backgroundColor: "#f0f8ff" },
+  loading: { flex: 1, justifyContent: "center", alignItems: "center" },
+  header: { alignItems: "center", paddingVertical: 20 },
+  name: { fontSize: 32, fontWeight: "bold", textTransform: "capitalize" },
+  sub: { color: "#666", marginTop: 4 },
+  imageWrap: { backgroundColor: "#fff", margin: 16, borderRadius: 12, alignItems: "center", paddingVertical: 20 },
 });

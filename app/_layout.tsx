@@ -1,26 +1,36 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+// let op: pas deze import aan naar relatieve paden als je geen alias gebruikt
+import { useColorScheme } from "../components/useColorScheme";
+import { databaseService } from "./services/database";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { useColorScheme } from '@/components/useColorScheme';
+export { ErrorBoundary } from "expo-router";
 
-export { ErrorBoundary } from 'expo-router';
-
-export const unstable_settings = {
-  initialRouteName: '(tabs)',
-};
+export const unstable_settings = { initialRouteName: "(tabs)" };
 
 SplashScreen.preventAutoHideAsync();
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
+
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
@@ -29,9 +39,7 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
 
   if (!loaded) return null;
@@ -42,17 +50,25 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+  // init database at startup
+  useEffect(() => {
+    databaseService.initDatabase().catch((err) => {
+      console.error("Failed to init database:", err);
+    });
+  }, []);
+
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            {/* kies of je [name] of [id] gebruikt, maar niet beide */}
+            <Stack.Screen name="pokemon/[name]" options={{ title: "Pokémon Details" }} />
+            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+          </Stack>
+        </ThemeProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
-
-
-
