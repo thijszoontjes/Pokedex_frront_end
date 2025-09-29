@@ -124,7 +124,7 @@ export default function PokemonDetailScreen() {
         ) : evolutionChain && evolutionChain.length > 0 ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.evolutionScroll}>
             {evolutionChain.map((step, index) => (
-              <View key={step.id} style={styles.evolutionStep}>
+              <View key={`${step.id}-${index}`} style={styles.evolutionStep}>
                 <View style={styles.evolutionPokemon}>
                   <PokemonImage id={step.id} size={80} />
                   <Text style={styles.evolutionName}>

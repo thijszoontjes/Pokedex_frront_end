@@ -68,7 +68,14 @@ export const useEvolutionChain = (speciesId: number) =>
           return steps;
         };
         
-        return parseEvolutionChain(evolutionChain.chain);
+        const result = parseEvolutionChain(evolutionChain.chain);
+        
+        // Final deduplication to ensure no duplicates
+        const uniqueEvolutions = result.filter((pokemon, index, array) => 
+          array.findIndex(p => p.id === pokemon.id) === index
+        );
+        
+        return uniqueEvolutions;
       } catch (error) {
         console.error('Error fetching evolution chain:', error);
         return [];
