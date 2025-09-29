@@ -4,12 +4,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { usePokemonByName } from "../hooks/use-pokemon";
+import { useEvolutionChain } from "../hooks/use-evolution";
 import { PokemonImage } from "../../components/ui/pokemon-image";
 import Favorite from "../../components/ui/favorite";
 
 const { width } = Dimensions.get('window');
 
-type TabType = 'about' | 'stats' | 'evolution' | 'moves';
+type TabType = 'about' | 'stats' | 'evolution';
 
 export default function PokemonDetailScreen() {
   const params = useLocalSearchParams();
@@ -54,8 +55,16 @@ export default function PokemonDetailScreen() {
   const renderAboutTab = () => (
     <View style={styles.tabContent}>
       <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Species</Text>
-        <Text style={styles.infoValue}>{pokemon.species.name.charAt(0).toUpperCase() + pokemon.species.name.slice(1)}</Text>
+        <Text style={styles.infoLabel}>Name</Text>
+        <Text style={styles.infoValue}>{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</Text>
+      </View>
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>ID</Text>
+        <Text style={styles.infoValue}>#{pokemon.id.toString().padStart(3, "0")}</Text>
+      </View>
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>Base Experience</Text>
+        <Text style={styles.infoValue}>{pokemon.base_experience || 'Unknown'}</Text>
       </View>
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>Height</Text>
@@ -64,6 +73,18 @@ export default function PokemonDetailScreen() {
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>Weight</Text>
         <Text style={styles.infoValue}>{(pokemon.weight / 10).toFixed(1)} kg</Text>
+      </View>
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>Types</Text>
+        <View style={styles.infoValueContainer}>
+          {pokemon.types.map((t, i) => (
+            <View key={i} style={[styles.typeBadgeSmall, { backgroundColor: getTypeColor(t.type.name) }]}>
+              <Text style={styles.typeTextSmall}>
+                {t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)}
+              </Text>
+            </View>
+          ))}
+        </View>
       </View>
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>Abilities</Text>
@@ -90,30 +111,50 @@ export default function PokemonDetailScreen() {
     </View>
   );
 
-  const renderEvolutionTab = () => (
-    <View style={styles.tabContent}>
-      <Text style={styles.comingSoon}>Evolution chain coming soon...</Text>
-    </View>
-  );
-
-  const renderMovesTab = () => (
-    <View style={styles.tabContent}>
-      {pokemon.moves.slice(0, 10).map((move, index) => (
-        <View key={index} style={styles.moveItem}>
-          <Text style={styles.moveName}>
-            {move.move.name.charAt(0).toUpperCase() + move.move.name.slice(1).replace('-', ' ')}
-          </Text>
-        </View>
-      ))}
-    </View>
-  );
+  const renderEvolutionTab = () => {
+    const { data: evolutionChain, isLoading: evolutionLoading } = useEvolutionChain(pokemon.id);
+    
+    return (
+      <View style={styles.tabContent}>
+        <Text style={styles.sectionTitle}>Evolution Chain</Text>
+        {evolutionLoading ? (
+          <View style={styles.evolutionContainer}>
+            <ActivityIndicator size="small" color="#5631E8" />
+            <Text style={styles.evolutionNote}>Loading evolution chain...</Text>
+          </View>
+        ) : evolutionChain && evolutionChain.length > 0 ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.evolutionScroll}>
+            {evolutionChain.map((step, index) => (
+              <View key={step.id} style={styles.evolutionStep}>
+                <View style={styles.evolutionPokemon}>
+                  <PokemonImage id={step.id} size={80} />
+                  <Text style={styles.evolutionName}>
+                    {step.name.charAt(0).toUpperCase() + step.name.slice(1)}
+                  </Text>
+                  {step.minLevel && (
+                    <Text style={styles.evolutionLevel}>Lv. {step.minLevel}</Text>
+                  )}
+                </View>
+                {index < evolutionChain.length - 1 && (
+                  <Ionicons name="arrow-forward" size={20} color="#666" style={styles.evolutionArrow} />
+                )}
+              </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.evolutionContainer}>
+            <Text style={styles.evolutionText}>This Pokémon does not evolve</Text>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'about': return renderAboutTab();
       case 'stats': return renderStatsTab();
       case 'evolution': return renderEvolutionTab();
-      case 'moves': return renderMovesTab();
       default: return renderAboutTab();
     }
   };
@@ -164,7 +205,7 @@ export default function PokemonDetailScreen() {
       <View style={styles.contentSection}>
         {/* Tab Navigation */}
         <View style={styles.tabNavigation}>
-          {(['about', 'stats', 'evolution', 'moves'] as TabType[]).map((tab) => (
+          {(['about', 'stats', 'evolution'] as TabType[]).map((tab) => (
             <TouchableOpacity
               key={tab}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
@@ -293,6 +334,7 @@ const styles = StyleSheet.create({
   tabContentContainer: {
     flex: 1,
     paddingHorizontal: 20,
+    minHeight: 300, // Ensure minimum height for content
   },
   tabContent: {
     paddingBottom: 30,
@@ -317,6 +359,21 @@ const styles = StyleSheet.create({
     color: "#333",
     fontWeight: "600",
     textTransform: "capitalize",
+  },
+  infoValueContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+  typeBadgeSmall: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  typeTextSmall: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
   },
   
   // Stats Tab
@@ -354,25 +411,58 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   
-  // Evolution & Moves
-  comingSoon: {
+  // Evolution
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  evolutionContainer: {
+    backgroundColor: "#f8f9fa",
+    borderRadius: 12,
+    padding: 20,
+    alignItems: "center",
+  },
+  evolutionText: {
     fontSize: 16,
     color: "#666",
-    textAlign: "center",
-    fontStyle: "italic",
-    marginTop: 50,
-  },
-  moveItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "#f8f8f8",
-    borderRadius: 8,
     marginBottom: 8,
   },
-  moveName: {
+  evolutionNote: {
     fontSize: 14,
+    color: "#999",
+    fontStyle: "italic",
+  },
+  evolutionScroll: {
+    paddingVertical: 10,
+  },
+  evolutionStep: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  evolutionPokemon: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 10,
+    marginHorizontal: 5,
+    minWidth: 100,
+  },
+  evolutionName: {
+    fontSize: 12,
+    fontWeight: "600",
     color: "#333",
-    fontWeight: "500",
-    textTransform: "capitalize",
+    marginTop: 5,
+    textAlign: "center",
+  },
+  evolutionLevel: {
+    fontSize: 10,
+    color: "#666",
+    marginTop: 2,
+  },
+  evolutionArrow: {
+    marginHorizontal: 5,
   },
 });
