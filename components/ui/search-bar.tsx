@@ -1,45 +1,37 @@
 import { View, TextInput, StyleSheet } from "react-native";
+import { theme } from "@/constants/theme";
 
 type Props = {
   value: string;
-  onChangeText: (t: string) => void;
+  onChangeText: (v: string) => void;
   placeholder?: string;
 };
 
-export default function SearchBar({ value, onChangeText, placeholder = "Search Pokémon..." }: Props) {
+export default function SearchBar({ value, onChangeText, placeholder }: Props) {
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.wrap}>
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor="#6B7280"
-        autoCorrect={false}
-        autoCapitalize="none"
+        placeholder={placeholder ?? "Search for Pokémon.."}
+        placeholderTextColor={theme.colors.subtext}
         style={styles.input}
+        autoCapitalize="none"
+        returnKeyType="search"
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
+  wrap: { paddingHorizontal: theme.space.lg, paddingTop: theme.space.lg },
   input: {
-    height: 44,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    backgroundColor: "#FFFFFF",
+    height: 46,
+    borderRadius: theme.radius.lg,
+    paddingHorizontal: theme.space.md,
+    backgroundColor: theme.colors.panel,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: theme.colors.border,
+    color: theme.colors.text,
   },
 });

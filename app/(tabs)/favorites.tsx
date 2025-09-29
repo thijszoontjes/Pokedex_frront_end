@@ -1,33 +1,33 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useMemo, useState } from "react";
+import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { theme } from "@/constants/theme";
 import PokemonList from "@/components/ui/pokemon-list";
-import SearchBar from "@/components/ui/search-bar";
 import { pokemonData } from "@/constants/pokemon";
 
 export default function FavoritesScreen() {
-  const favoritesBase = pokemonData.slice(0, 2);
-  const [query, setQuery] = useState("");
+  const favBase = pokemonData.filter(p => (p as any).isFavorite === true);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return favoritesBase;
-    return favoritesBase.filter(p =>
-      p.name.toLowerCase().includes(q) ||
-      String(p.id).padStart(3, "0").includes(q) ||
-      p.type.toLowerCase().includes(q)
-    );
-  }, [query]);
-
-  const header = (
-    <>
-      <SearchBar value={query} onChangeText={setQuery} placeholder="Search favorites…" />
-      <></>
-    </>
-  );
+  const listData = favBase.map(p => ({
+    id: p.id,
+    name: p.name,
+    image: p.image ?? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`,
+  }));
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <PokemonList data={filtered} header={header} title="Favorites" emptyText="No favorites match your search." />
+    <SafeAreaView style={styles.safe}>
+      <Text style={styles.title}>Favorites</Text>
+      <PokemonList data={listData} />
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: theme.colors.bg },
+  title: {
+    paddingHorizontal: theme.space.lg,
+    paddingTop: theme.space.lg,
+    paddingBottom: theme.space.xs,
+    fontSize: 22,
+    fontWeight: "800",
+    color: theme.colors.text,
+  },
+});
