@@ -30,32 +30,38 @@ export const useEvolutionChain = (speciesId: number) =>
           .then(res => res.json());
         
         // Parse the evolution chain into a flat array
-        const parseEvolutionChain = (chainLink: any): EvolutionChainStep[] => {
-          const steps: EvolutionChainStep[] = [];
-          
-          // Add current Pokemon
+        const parseEvolutionChain = (chainLink: any, steps: EvolutionChainStep[] = []): EvolutionChainStep[] => {
+          // Add current Pokemon if not already in the array
           const pokemonId = chainLink.species.url.split('/').slice(-2, -1)[0];
-          steps.push({
-            id: Number(pokemonId),
-            name: chainLink.species.name,
-          });
+          const currentId = Number(pokemonId);
+          
+          if (!steps.find(step => step.id === currentId)) {
+            steps.push({
+              id: currentId,
+              name: chainLink.species.name,
+            });
+          }
           
           // Add evolved forms
           chainLink.evolves_to.forEach((evolution: any) => {
             const evolutionDetails = evolution.evolution_details[0];
             const evolvedPokemonId = evolution.species.url.split('/').slice(-2, -1)[0];
+            const evolvedId = Number(evolvedPokemonId);
             
-            steps.push({
-              id: Number(evolvedPokemonId),
-              name: evolution.species.name,
-              minLevel: evolutionDetails?.min_level || undefined,
-              trigger: evolutionDetails?.trigger?.name || undefined,
-              item: evolutionDetails?.item?.name || undefined,
-            });
+            // Only add if not already in the array
+            if (!steps.find(step => step.id === evolvedId)) {
+              steps.push({
+                id: evolvedId,
+                name: evolution.species.name,
+                minLevel: evolutionDetails?.min_level || undefined,
+                trigger: evolutionDetails?.trigger?.name || undefined,
+                item: evolutionDetails?.item?.name || undefined,
+              });
+            }
             
             // Recursively add further evolutions
             if (evolution.evolves_to.length > 0) {
-              steps.push(...parseEvolutionChain(evolution));
+              parseEvolutionChain(evolution, steps);
             }
           });
           

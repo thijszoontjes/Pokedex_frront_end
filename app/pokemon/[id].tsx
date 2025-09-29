@@ -18,6 +18,7 @@ export default function PokemonDetailScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('about');
   
   const { data: pokemon, isLoading, error } = usePokemonById(realId || "");
+  const { data: evolutionChain, isLoading: evolutionLoading } = useEvolutionChain(pokemon?.id || 0);
 
   // Helper functions defined here so they're always available
   const getTypeColor = (type: string) => {
@@ -112,8 +113,6 @@ export default function PokemonDetailScreen() {
   );
 
   const renderEvolutionTab = () => {
-    const { data: evolutionChain, isLoading: evolutionLoading } = useEvolutionChain(pokemon.id);
-    
     return (
       <View style={styles.tabContent}>
         <Text style={styles.sectionTitle}>Evolution Chain</Text>
