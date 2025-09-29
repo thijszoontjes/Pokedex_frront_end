@@ -11,6 +11,19 @@ export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const { data, isLoading, isError, error } = usePokemonList(150, 0);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!data) return [];
+    if (!q) return data;
+    return data.filter(p => p.name.toLowerCase().includes(q) || p.id.padStart(3, "0").includes(q));
+  }, [data, query]);
+
+  const listData = (filtered ?? []).map(p => ({
+    id: Number(p.id),
+    name: p.name.charAt(0).toUpperCase() + p.name.slice(1),
+    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`,
+  }));
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -34,19 +47,6 @@ export default function HomeScreen() {
       </SafeAreaView>
     );
   }
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!data) return [];
-    if (!q) return data;
-    return data.filter(p => p.name.toLowerCase().includes(q) || p.id.padStart(3, "0").includes(q));
-  }, [data, query]);
-
-  const listData = (filtered ?? []).map(p => ({
-    id: Number(p.id),
-    name: p.name.charAt(0).toUpperCase() + p.name.slice(1),
-    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`,
-  }));
 
   return (
     <SafeAreaView style={styles.safe}>
