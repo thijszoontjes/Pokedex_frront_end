@@ -3,6 +3,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-nat
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePokemonById } from "../hooks/use-pokemon";
 import { PokemonImage } from "../../components/ui/pokemon-image";
+import Favorite from "../../components/ui/favorite";
 
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -15,7 +16,7 @@ export default function PokemonDetailScreen() {
         <View style={styles.loading}><ActivityIndicator size="large" /><Text>Loading…</Text></View>
       </SafeAreaView>
     );
-  }
+  } 
 
   if (error || !pokemon) {
     return (
@@ -31,6 +32,13 @@ export default function PokemonDetailScreen() {
         <View style={styles.header}>
           <Text style={styles.name}>{pokemon.name}</Text>
           <Text style={styles.sub}>#{String(pokemon.id).padStart(3, "0")}</Text>
+          <View style={styles.favoriteContainer}>
+            <Favorite 
+              pokemonId={pokemon.id} 
+              pokemonName={pokemon.name}
+              imageUrl={pokemon.sprites.front_default || undefined}
+            />
+          </View>
         </View>
         <View style={styles.imageWrap}>
           <PokemonImage id={pokemon.id} size={220} />
@@ -46,5 +54,6 @@ const styles = StyleSheet.create({
   header: { alignItems: "center", paddingVertical: 20 },
   name: { fontSize: 32, fontWeight: "bold", textTransform: "capitalize" },
   sub: { color: "#666", marginTop: 4 },
+  favoriteContainer: { marginTop: 12 },
   imageWrap: { backgroundColor: "#fff", margin: 16, borderRadius: 12, alignItems: "center", paddingVertical: 20 },
 });

@@ -3,10 +3,16 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-nat
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePokemonByName } from "../hooks/use-pokemon";
 import { PokemonImage } from "../../components/ui/pokemon-image";
+import Favorite from "../../components/ui/favorite";
 
 export default function PokemonDetailScreen() {
   const params = useLocalSearchParams();
   const nameParam = Array.isArray(params.name) ? params.name[0] : params.name;
+  
+  // Debug logging
+  console.log("Pokemon name param:", nameParam);
+  console.log("Params object:", params);
+  
   const { data: pokemon, isLoading, error } = usePokemonByName((nameParam || "").toString());
 
   if (isLoading) {
@@ -38,6 +44,13 @@ export default function PokemonDetailScreen() {
             {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
           </Text>
           <Text style={styles.pokemonId}>#{pokemon.id.toString().padStart(3, "0")}</Text>
+          <View style={styles.favoriteContainer}>
+            <Favorite 
+              pokemonId={pokemon.id} 
+              pokemonName={pokemon.name}
+              imageUrl={pokemon.sprites.front_default || undefined}
+            />
+          </View>
         </View>
 
         <View style={styles.imageContainer}>
@@ -71,6 +84,7 @@ const styles = StyleSheet.create({
   header: { alignItems: "center", paddingVertical: 20, paddingHorizontal: 16 },
   pokemonName: { fontSize: 32, fontWeight: "bold", color: "#0E0940", textTransform: "capitalize" },
   pokemonId: { fontSize: 18, color: "#666", marginTop: 4 },
+  favoriteContainer: { marginTop: 12 },
   imageContainer: {
     alignItems: "center",
     paddingVertical: 20,
