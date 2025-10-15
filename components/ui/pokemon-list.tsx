@@ -6,9 +6,10 @@ type Item = { id: number; name: string; image: string };
 type Props = {
   data: Item[];
   onPressItem?: (item: Item) => void;
+  onAddToFavorites?: (item: Item) => void;
 };
 
-export default function PokemonList({ data, onPressItem }: Props) {
+export default function PokemonList({ data, onPressItem, onAddToFavorites }: Props) {
   return (
     <FlatList
       data={data}
@@ -24,6 +25,7 @@ export default function PokemonList({ data, onPressItem }: Props) {
             name={item.name}
             imageUri={item.image}
             onPress={() => onPressItem?.(item)}
+            onAddToFavorites={() => onAddToFavorites?.(item)}
           />
         </View>
       )}

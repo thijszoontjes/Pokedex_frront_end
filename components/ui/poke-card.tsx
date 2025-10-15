@@ -1,31 +1,59 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useState } from "react";
 import { theme } from "@/constants/theme";
+import PokemonActionSheet from "./pokemon-action-sheet";
 
 type Props = {
   id: number;
   name: string;
   imageUri: string;
   onPress?: () => void;
+  onAddToFavorites?: () => void;
 };
 
-export default function PokeCard({ id, name, imageUri, onPress }: Props) {
+export default function PokeCard({ id, name, imageUri, onPress, onAddToFavorites }: Props) {
   const label = String(id).padStart(3, "0");
+  const [showActionSheet, setShowActionSheet] = useState(false);
+
+  const handleDotsPress = () => {
+    setShowActionSheet(true);
+  };
+
+  const handleAddToFavorites = () => {
+    if (onAddToFavorites) {
+      onAddToFavorites();
+    }
+  };
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && { opacity: 0.9 }]}>
-      <View style={styles.badge}>
-        <Text style={styles.badgeText}>{label}</Text>
-      </View>
+    <>
+      <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && { opacity: 0.9 }]}>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{label}</Text>
+        </View>
 
-      <View style={styles.imageWrap}>
-        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-      </View>
+        <View style={styles.imageWrap}>
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+        </View>
 
-      <View style={styles.bottom}>
-        <Text numberOfLines={1} style={styles.name}>{name}</Text>
-        <Text style={styles.dots}>⋮</Text>
-      </View>
-    </Pressable>
+        <View style={styles.bottom}>
+          <Text numberOfLines={1} style={styles.name}>{name}</Text>
+          <TouchableOpacity onPress={handleDotsPress} style={styles.dotsButton}>
+            <Text style={styles.dots}>⋮</Text>
+          </TouchableOpacity>
+        </View>
+      </Pressable>
+
+      <PokemonActionSheet
+        visible={showActionSheet}
+        onClose={() => setShowActionSheet(false)}
+        pokemonId={id}
+        pokemonName={name}
+        imageUrl={imageUri}
+        onOpenDetail={() => onPress?.()}
+        onAddToFavorites={handleAddToFavorites}
+      />
+    </>
   );
 }
 
@@ -62,5 +90,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   name: { color: theme.colors.text, fontSize: 15, fontWeight: "700", flex: 1, marginRight: 8 },
+  dotsButton: {
+    padding: 4,
+    borderRadius: 12,
+  },
   dots: { color: theme.colors.subtext, fontSize: 18 },
 });

@@ -2,7 +2,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { usePokemonById } from "../hooks/use-pokemon";
 import { useEvolutionChain } from "../hooks/use-evolution";
 import { PokemonImage } from "../../components/ui/pokemon-image";
@@ -16,9 +16,31 @@ export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams();
   const realId = Array.isArray(id) ? id[0] : id;
   const [activeTab, setActiveTab] = useState<TabType>('about');
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   
   const { data: pokemon, isLoading, error } = usePokemonById(realId || "");
   const { data: evolutionChain, isLoading: evolutionLoading } = useEvolutionChain(pokemon?.id || 0);
+
+  const tabs: TabType[] = ['about', 'stats', 'evolution'];
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const changeTab = (index: number) => {
+    setCurrentTabIndex(index);
+    setActiveTab(tabs[index]);
+    scrollViewRef.current?.scrollTo({
+      x: index * width,
+      animated: true,
+    });
+  };
+
+  const handleScroll = (event: any) => {
+    const scrollX = event.nativeEvent.contentOffset.x;
+    const newIndex = Math.round(scrollX / width);
+    if (newIndex !== currentTabIndex && newIndex >= 0 && newIndex < tabs.length) {
+      setCurrentTabIndex(newIndex);
+      setActiveTab(tabs[newIndex]);
+    }
+  };
 
   // Helper functions defined here so they're always available
   const getTypeColor = (type: string) => {
@@ -158,6 +180,15 @@ export default function PokemonDetailScreen() {
     }
   };
 
+  const renderTabContentByType = (tab: TabType) => {
+    switch (tab) {
+      case 'about': return renderAboutTab();
+      case 'stats': return renderStatsTab();
+      case 'evolution': return renderEvolutionTab();
+      default: return renderAboutTab();
+    }
+  };
+
   const primaryType = pokemon.types[0]?.type.name || 'normal';
   const typeColor = getTypeColor(primaryType);
 
@@ -204,11 +235,11 @@ export default function PokemonDetailScreen() {
       <View style={styles.contentSection}>
         {/* Tab Navigation */}
         <View style={styles.tabNavigation}>
-          {(['about', 'stats', 'evolution'] as TabType[]).map((tab) => (
+          {tabs.map((tab, index) => (
             <TouchableOpacity
               key={tab}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
-              onPress={() => setActiveTab(tab)}
+              onPress={() => changeTab(index)}
             >
               <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -217,9 +248,23 @@ export default function PokemonDetailScreen() {
           ))}
         </View>
 
-        {/* Tab Content */}
-        <ScrollView style={styles.tabContentContainer} showsVerticalScrollIndicator={false}>
-          {renderTabContent()}
+        {/* Swipeable Tab Content - Horizontal ScrollView */}
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScroll}
+          style={styles.tabContentWrapper}
+          contentContainerStyle={styles.tabContentSlider}
+        >
+          {tabs.map((tab, index) => (
+            <View key={tab} style={styles.tabContentPage}>
+              <ScrollView style={styles.tabContentContainer} showsVerticalScrollIndicator={false}>
+                {renderTabContentByType(tab)}
+              </ScrollView>
+            </View>
+          ))}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -327,6 +372,17 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: "#5631E8",
     fontWeight: "bold",
+  },
+  
+  // Swipeable Tab Content
+  tabContentWrapper: {
+    flex: 1,
+  },
+  tabContentSlider: {
+    flexDirection: 'row',
+  },
+  tabContentPage: {
+    width: width,
   },
   
   // Tab Content

@@ -1,15 +1,17 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { theme } from "@/constants/theme";
 import SearchBar from "@/components/ui/search-bar";
 import PokemonList from "@/components/ui/pokemon-list";
 import { usePokemonList } from "../hooks/use-pokemon";
+import { useToggleFavorite } from "../hooks/use-favorites";
 import { router } from "expo-router";
 
 export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const { data, isLoading, isError, error } = usePokemonList(150, 0);
+  const toggleFavorite = useToggleFavorite();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -23,6 +25,21 @@ export default function HomeScreen() {
     name: p.name.charAt(0).toUpperCase() + p.name.slice(1),
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`,
   }));
+
+  const handleAddToFavorites = (pokemon: { id: number; name: string; image: string }) => {
+    toggleFavorite.mutate({
+      pokemonId: pokemon.id,
+      name: pokemon.name.toLowerCase(),
+      imageUrl: pokemon.image,
+      isCurrentlyFavorite: false, // We assume it's not favorited when adding from main list
+    });
+    
+    Alert.alert(
+      "Added to Favorites! ❤️",
+      `${pokemon.name} has been added to your favorites.`,
+      [{ text: "OK" }]
+    );
+  };
 
   if (isLoading) {
     return (
@@ -55,6 +72,7 @@ export default function HomeScreen() {
      <PokemonList
   data={listData}
   onPressItem={(p) => router.push(`/pokemon/${p.id}`)}
+  onAddToFavorites={handleAddToFavorites}
 />
       
     </SafeAreaView>
