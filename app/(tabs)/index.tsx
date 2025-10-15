@@ -3,8 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { useTheme } from "@/constants/ThemeContext";
 import SearchBar from "@/components/ui/search-bar";
-import PokemonList from "@/components/ui/pokemon-list";
-import { usePokemonList } from "../hooks/use-pokemon";
+import InfinitePokemonList from "@/components/ui/infinite-pokemon-list";
+import { useInfinitePokemons } from "../hooks/use-pokemon";
 import { useToggleFavorite } from "../hooks/use-favorites";
 import { router } from "expo-router";
 
@@ -12,28 +12,26 @@ export default function HomeScreen() {
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const [query, setQuery] = useState("");
-  const { data, isLoading, isError, error } = usePokemonList(150, 0);
+  
+  // Use infinite query instead of regular query
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfinitePokemons(20); // Load 20 Pokemon per page
+
   const toggleFavorite = useToggleFavorite();
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!data) return [];
-    if (!q) return data;
-    return data.filter(p => p.name.toLowerCase().includes(q) || p.id.padStart(3, "0").includes(q));
-  }, [data, query]);
-
-  const listData = (filtered ?? []).map(p => ({
-    id: Number(p.id),
-    name: p.name.charAt(0).toUpperCase() + p.name.slice(1),
-    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`,
-  }));
 
   const handleAddToFavorites = (pokemon: { id: number; name: string; image: string }) => {
     toggleFavorite.mutate({
       pokemonId: pokemon.id,
       name: pokemon.name.toLowerCase(),
       imageUrl: pokemon.image,
-      isCurrentlyFavorite: false, // We assume it's not favorited when adding from main list
+      isCurrentlyFavorite: false,
     });
     
     Alert.alert(
@@ -41,6 +39,12 @@ export default function HomeScreen() {
       `${pokemon.name} has been added to your favorites.`,
       [{ text: "OK" }]
     );
+  };
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
   };
 
   if (isLoading) {
@@ -67,29 +71,52 @@ export default function HomeScreen() {
     );
   }
 
+  // Get total count for display
+  const totalLoaded = data?.pages?.reduce((total, page) => total + page.results.length, 0) || 0;
+  const totalCount = data?.pages?.[0]?.total || 1000; // Fallback to known Pokemon count
+
   return (
     <SafeAreaView style={styles.safe}>
       <SearchBar value={query} onChangeText={setQuery} placeholder="Search for Pokémon.." />
-      <Text style={styles.title}>All Pokémon</Text>
-     <PokemonList
-  data={listData}
-  onPressItem={(p) => router.push(`/pokemon/${p.id}`)}
-  onAddToFavorites={handleAddToFavorites}
-/>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>All Pokémon</Text>
+        {!query && (
+          <Text style={styles.subtitle}>
+            {totalLoaded} of {totalCount} loaded
+          </Text>
+        )}
+      </View>
       
+      <InfinitePokemonList
+        data={data?.pages?.map(page => page.results) || []}
+        onPressItem={(p: { id: number; name: string; image: string }) => router.push(`/pokemon/${p.id}`)}
+        onAddToFavorites={handleAddToFavorites}
+        onLoadMore={handleLoadMore}
+        isLoading={isLoading}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        searchQuery={query}
+      />
     </SafeAreaView>
   );
 }
 
 const createStyles = (theme: any) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.colors.bg },
-  title: {
+  titleContainer: {
     paddingHorizontal: theme.space.lg,
     paddingTop: theme.space.md,
     paddingBottom: theme.space.xs,
+  },
+  title: {
     fontSize: 22,
     fontWeight: "800",
     color: theme.colors.text,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: theme.colors.subtext,
+    marginTop: 4,
   },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   sub: { marginTop: 8, color: theme.colors.subtext },

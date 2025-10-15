@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { NamedAPIResource } from "pokenode-ts";
 import { PokeApiService } from "../services/pokemon-api";
 
@@ -40,3 +40,24 @@ export const usePokemonById = (id: number | string) =>
     enabled: id !== undefined && id !== null && String(id).length > 0,
     staleTime: 10 * 60 * 1000,
   });
+
+// Infinite scroll hook for paginated Pokemon loading
+export const useInfinitePokemons = (pageSize = 20) => {
+  return useInfiniteQuery({
+    queryKey: ["infinite-pokemon-list", pageSize],
+    queryFn: async ({ pageParam = 0 }) => {
+      const res = await PokeApiService.listPokemons(pageParam, pageSize);
+      return {
+        results: res.results.map(withId),
+        nextOffset: pageParam + pageSize,
+        hasMore: res.next !== null, // PokeAPI returns null when no more results
+        total: res.count,
+      };
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasMore ? lastPage.nextOffset : undefined;
+    },
+    initialPageParam: 0,
+    staleTime: 10 * 60 * 1000,
+  });
+};
