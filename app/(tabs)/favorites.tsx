@@ -3,10 +3,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFavorites } from "../hooks/use-favorites";
 import PokemonList from "../../components/ui/pokemon-list";
 import { router } from "expo-router";
-import { theme } from "@/constants/theme";
+import { useTheme } from "@/constants/ThemeContext";
 
 
 export default function FavoritesScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const { data: favorites, isLoading, error } = useFavorites();
 
   // Transform favorites data to match PokemonList expected format
@@ -55,7 +57,7 @@ export default function FavoritesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.bg },
   header: { 
     paddingHorizontal: theme.space.lg, 

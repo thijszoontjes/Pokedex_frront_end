@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -10,6 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 // let op: pas deze import aan naar relatieve paden als je geen alias gebruikt
 import { useColorScheme } from "../components/useColorScheme";
 import { databaseService } from "./services/database";
+import { ThemeProvider } from "../constants/ThemeContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -68,16 +69,18 @@ function RootLayoutNav() {
 
   return (
     <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
-            <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          </Stack>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
+              <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+            </Stack>
+          </NavigationThemeProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

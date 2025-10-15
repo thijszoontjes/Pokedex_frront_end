@@ -1,7 +1,7 @@
 import { ActivityIndicator, StyleSheet, Text, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
-import { theme } from "@/constants/theme";
+import { useTheme } from "@/constants/ThemeContext";
 import SearchBar from "@/components/ui/search-bar";
 import PokemonList from "@/components/ui/pokemon-list";
 import { usePokemonList } from "../hooks/use-pokemon";
@@ -9,6 +9,8 @@ import { useToggleFavorite } from "../hooks/use-favorites";
 import { router } from "expo-router";
 
 export default function HomeScreen() {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
   const [query, setQuery] = useState("");
   const { data, isLoading, isError, error } = usePokemonList(150, 0);
   const toggleFavorite = useToggleFavorite();
@@ -79,7 +81,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.colors.bg },
   title: {
     paddingHorizontal: theme.space.lg,

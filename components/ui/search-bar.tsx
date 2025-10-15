@@ -1,5 +1,5 @@
 import { View, TextInput, StyleSheet } from "react-native";
-import { theme } from "@/constants/theme";
+import { useTheme } from "@/constants/ThemeContext";
 
 type Props = {
   value: string;
@@ -8,6 +8,9 @@ type Props = {
 };
 
 export default function SearchBar({ value, onChangeText, placeholder }: Props) {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
+  
   return (
     <View style={styles.wrap}>
       <TextInput
@@ -23,7 +26,7 @@ export default function SearchBar({ value, onChangeText, placeholder }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   wrap: { paddingHorizontal: theme.space.lg, paddingTop: theme.space.lg },
   input: {
     height: 46,
