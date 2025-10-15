@@ -127,7 +127,7 @@ export default function InfinitePokemonList({
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof import('../../constants/theme').createTheme>) => StyleSheet.create({
   content: {
     paddingHorizontal: theme.space.lg,
     paddingTop: theme.space.md,

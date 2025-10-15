@@ -76,11 +76,11 @@ export default function SettingsTabScreen() {
                 [
                   {
                     text: 'English',
-                    onPress: () => setLanguage('en' as Language),
+                    onPress: () => setLanguage('en'),
                   },
                   {
                     text: 'Nederlands',
-                    onPress: () => setLanguage('nl' as Language),
+                    onPress: () => setLanguage('nl'),
                   },
                   {
                     text: t('common.cancel'),

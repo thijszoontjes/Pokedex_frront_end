@@ -26,7 +26,7 @@ export default function SearchBar({ value, onChangeText, placeholder }: Props) {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof import('../../constants/theme').createTheme>) => StyleSheet.create({
   wrap: { paddingHorizontal: theme.space.lg, paddingTop: theme.space.lg },
   input: {
     height: 46,

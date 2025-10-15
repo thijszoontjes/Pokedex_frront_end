@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useRef } from "react";
@@ -43,7 +43,7 @@ export default function PokemonDetailScreen() {
     });
   };
 
-  const handleScroll = (event: any) => {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollX = event.nativeEvent.contentOffset.x;
     const newIndex = Math.round(scrollX / width);
     if (newIndex !== currentTabIndex && newIndex >= 0 && newIndex < tabs.length) {

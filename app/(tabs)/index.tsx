@@ -122,7 +122,7 @@ export default function HomeScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof import('../../constants/theme').createTheme>) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.colors.bg },
   titleContainer: {
     paddingHorizontal: theme.space.lg,

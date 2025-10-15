@@ -9,6 +9,25 @@ export interface EvolutionChainStep {
   item?: string;
 }
 
+interface EvolutionDetail {
+  min_level: number | null;
+  trigger: {
+    name: string;
+  };
+  item?: {
+    name: string;
+  };
+}
+
+interface ChainLink {
+  species: {
+    name: string;
+    url: string;
+  };
+  evolution_details: EvolutionDetail[];
+  evolves_to: ChainLink[];
+}
+
 export const useEvolutionChain = (speciesId: number) =>
   useQuery({
     queryKey: ["evolution-chain", speciesId],
@@ -30,7 +49,7 @@ export const useEvolutionChain = (speciesId: number) =>
           .then(res => res.json());
         
         // Parse the evolution chain into a flat array
-        const parseEvolutionChain = (chainLink: any, steps: EvolutionChainStep[] = []): EvolutionChainStep[] => {
+        const parseEvolutionChain = (chainLink: ChainLink, steps: EvolutionChainStep[] = []): EvolutionChainStep[] => {
           // Add current Pokemon if not already in the array
           const pokemonId = chainLink.species.url.split('/').slice(-2, -1)[0];
           const currentId = Number(pokemonId);
@@ -43,7 +62,7 @@ export const useEvolutionChain = (speciesId: number) =>
           }
           
           // Add evolved forms
-          chainLink.evolves_to.forEach((evolution: any) => {
+          chainLink.evolves_to.forEach((evolution: ChainLink) => {
             const evolutionDetails = evolution.evolution_details[0];
             const evolvedPokemonId = evolution.species.url.split('/').slice(-2, -1)[0];
             const evolvedId = Number(evolvedPokemonId);

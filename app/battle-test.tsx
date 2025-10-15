@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useBattle } from '../constants/BattleContext';
 import { useTheme } from '../constants/ThemeContext';
-import { useLocalization } from '../constants/LocalizationContext';
+import type { Pokemon } from 'pokenode-ts';
 
-// Test Pokemon data
+// Simple test Pokemon data - the battle system only needs basic properties
 const testPikachu = {
   id: 25,
   name: 'pikachu',
@@ -29,22 +29,21 @@ const testPikachu = {
   abilities: [
     { ability: { name: 'static' } }
   ]
-} as any;
+} as Pokemon;
 
 export default function BattleTestScreen() {
   const { theme } = useTheme();
   const { startBattle } = useBattle();
-  const { t } = useLocalization();
   const styles = createStyles(theme);
 
   const handleStartTestBattle = () => {
     Alert.alert(
-      t('battle.test.start'),
-      t('battle.test.description'),
+      'Start Test Battle',
+      'This will start a battle with Pikachu to test the battle system.',
       [
-        { text: t('common.cancel'), style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: t('battle.test.start'),
+          text: 'Start Battle',
           onPress: () => {
             startBattle(testPikachu);
             router.push('/battle');
@@ -58,18 +57,18 @@ export default function BattleTestScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
       <View style={styles.content}>
         <Text style={[styles.title, { color: theme.colors.text }]}>
-          {t('battle.test.title')}
+          Battle Test
         </Text>
         
         <Text style={[styles.description, { color: theme.colors.subtext }]}>
-          {t('battle.test.description')}
+          Test the Pokemon battle system with a pre-configured Pikachu battle.
         </Text>
 
         <TouchableOpacity 
           style={styles.battleButton}
           onPress={handleStartTestBattle}
         >
-          <Text style={styles.battleButtonText}>{t('battle.test.start')}</Text>
+          <Text style={styles.battleButtonText}>Start Test Battle</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -77,39 +76,15 @@ export default function BattleTestScreen() {
           onPress={() => router.back()}
         >
           <Text style={[styles.backButtonText, { color: theme.colors.text }]}>
-            {t('battle.test.back')}
+            Go Back
           </Text>
         </TouchableOpacity>
-
-        <View style={styles.features}>
-          <Text style={[styles.featuresTitle, { color: theme.colors.text }]}>
-            {t('battle.test.features')}
-          </Text>
-          <Text style={[styles.feature, { color: theme.colors.subtext }]}>
-            • Turn-based combat system
-          </Text>
-          <Text style={[styles.feature, { color: theme.colors.subtext }]}>
-            • Pokemon stat calculations
-          </Text>
-          <Text style={[styles.feature, { color: theme.colors.subtext }]}>
-            • Type effectiveness system
-          </Text>
-          <Text style={[styles.feature, { color: theme.colors.subtext }]}>
-            • Move database with PP system
-          </Text>
-          <Text style={[styles.feature, { color: theme.colors.subtext }]}>
-            • Battle animations & effects
-          </Text>
-          <Text style={[styles.feature, { color: theme.colors.subtext }]}>
-            • AI opponent logic
-          </Text>
-        </View>
       </View>
     </SafeAreaView>
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof import('../constants/theme').createTheme>) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -150,30 +125,16 @@ const createStyles = (theme: any) => StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   backButton: {
-    borderWidth: 2,
+    borderWidth: 1,
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 20,
-    marginBottom: 40,
   },
   backButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-  },
-  features: {
-    alignItems: 'flex-start',
-    width: '100%',
-    maxWidth: 300,
-  },
-  featuresTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  feature: {
-    fontSize: 14,
-    marginBottom: 6,
+    textAlign: 'center',
   },
 });

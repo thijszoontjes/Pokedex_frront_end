@@ -385,7 +385,7 @@ export default function BattleScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof import('../constants/theme').createTheme>) => StyleSheet.create({
   container: {
     flex: 1,
   },
