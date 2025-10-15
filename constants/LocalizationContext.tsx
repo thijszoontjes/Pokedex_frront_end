@@ -230,7 +230,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     // TODO: Add proper persistent storage when AsyncStorage is working
-    console.log('Language changed to:', lang);
+    // Language changed successfully
   };
 
   const getTranslations = (): Translations => {

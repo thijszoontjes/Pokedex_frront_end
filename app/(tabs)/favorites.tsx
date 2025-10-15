@@ -61,7 +61,7 @@ export default function FavoritesScreen() {
           onPressItem={(item) => router.push(`/pokemon/${item.id}`)}
           onAddToFavorites={(item) => {
             // This would actually remove from favorites since it's already a favorite
-            console.log("Pokemon is already in favorites:", item.name);
+            // Pokemon is already in favorites
           }}
         />
       </Animated.View>

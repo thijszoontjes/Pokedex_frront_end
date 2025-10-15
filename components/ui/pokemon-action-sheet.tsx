@@ -31,10 +31,10 @@ export default function PokemonActionSheet({
       });
       
       if (result.action === Share.sharedAction) {
-        console.log("Pokemon shared successfully!");
+        // Pokemon shared successfully
       }
     } catch (error) {
-      console.error("Error sharing:", error);
+      // Error occurred during sharing
       Alert.alert("Error", "Failed to share Pokemon");
     }
     onClose();

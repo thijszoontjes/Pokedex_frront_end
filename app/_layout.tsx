@@ -64,8 +64,9 @@ function RootLayoutNav() {
 
   // init database at startup
   useEffect(() => {
-    databaseService.initDatabase().catch((err) => {
-      console.error("Failed to init database:", err);
+    databaseService.initDatabase().catch(() => {
+      // Database initialization failed - app will continue with degraded functionality
+      // Favorites feature may not work properly
     });
   }, []);
 

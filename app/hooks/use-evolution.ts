@@ -96,7 +96,7 @@ export const useEvolutionChain = (speciesId: number) =>
         
         return uniqueEvolutions;
       } catch (error) {
-        console.error('Error fetching evolution chain:', error);
+        // Error fetching evolution chain
         return [];
       }
     },

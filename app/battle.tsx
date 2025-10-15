@@ -107,7 +107,7 @@ export default function BattleScreen() {
   // Auto enemy turn with proper state management
   useEffect(() => {
     if (currentTurn === 'enemy' && battlePhase === 'battle' && enemyPokemon && !isAnimating && !isProcessingTurnRef.current) {
-      console.log('Starting enemy turn...');
+      // Starting enemy turn
       isProcessingTurnRef.current = true;
       setTurnDisplay('Enemy Turn... (Thinking...)');
       
@@ -117,12 +117,12 @@ export default function BattleScreen() {
           const availableMoves = enemyPokemon.moves.filter(move => move.pp > 0);
           if (availableMoves.length > 0) {
             const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-            console.log('Enemy using move:', randomMove.name);
+            // Enemy using selected move
             useMove(randomMove, 'enemy');
             triggerBattleAnimation();
           }
         } catch (error) {
-          console.error('Enemy turn error:', error);
+          // Enemy turn error occurred
         } finally {
           isProcessingTurnRef.current = false;
           setTurnDisplay('Enemy Turn...');
@@ -158,7 +158,7 @@ export default function BattleScreen() {
         useMove(move, 'player');
         triggerBattleAnimation();
       } catch (error) {
-        console.error('Player move error:', error);
+        // Player move error occurred
       }
     }
   };
