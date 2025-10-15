@@ -1,9 +1,9 @@
-import { ActivityIndicator, StyleSheet, Text, View, Alert } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, Alert, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { useTheme } from "@/constants/ThemeContext";
 import SearchBar from "@/components/ui/search-bar";
-import InfinitePokemonList from "@/components/ui/infinite-pokemon-list";
+import InfinitePokemonList from "../../components/ui/infinite-pokemon-list";
 import { useInfinitePokemons } from "../hooks/use-pokemon";
 import { useToggleFavorite } from "../hooks/use-favorites";
 import { router } from "expo-router";
@@ -87,6 +87,16 @@ export default function HomeScreen() {
         )}
       </View>
       
+      {/* Battle Test Button */}
+      <View style={styles.battleTestContainer}>
+        <TouchableOpacity 
+          style={styles.battleTestButton}
+          onPress={() => router.push('/battle-test')}
+        >
+          <Text style={styles.battleTestText}>🎮 Test Battle System</Text>
+        </TouchableOpacity>
+      </View>
+      
       <InfinitePokemonList
         data={data?.pages?.map(page => page.results) || []}
         onPressItem={(p: { id: number; name: string; image: string }) => router.push(`/pokemon/${p.id}`)}
@@ -120,4 +130,28 @@ const createStyles = (theme: any) => StyleSheet.create({
   },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   sub: { marginTop: 8, color: theme.colors.subtext },
+  battleTestContainer: {
+    paddingHorizontal: theme.space.lg,
+    paddingVertical: theme.space.xs,
+  },
+  battleTestButton: {
+    backgroundColor: '#FF6B35',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  battleTestText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });

@@ -11,6 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme } from "../components/useColorScheme";
 import { databaseService } from "./services/database";
 import { ThemeProvider } from "../constants/ThemeContext";
+import { BattleProvider } from "../constants/BattleContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -70,16 +71,19 @@ function RootLayoutNav() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
-              <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-            </Stack>
-          </NavigationThemeProvider>
-        </QueryClientProvider>
+        <BattleProvider>
+          <QueryClientProvider client={queryClient}>
+            <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
+                <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
+                <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+                <Stack.Screen name="battle" options={{ headerShown: false, presentation: "fullScreenModal" }} />
+              </Stack>
+            </NavigationThemeProvider>
+          </QueryClientProvider>
+        </BattleProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

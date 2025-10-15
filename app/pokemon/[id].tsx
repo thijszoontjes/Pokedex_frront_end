@@ -7,6 +7,7 @@ import { usePokemonById } from "../hooks/use-pokemon";
 import { useEvolutionChain } from "../hooks/use-evolution";
 import { PokemonImage } from "../../components/ui/pokemon-image";
 import Favorite from "../../components/ui/favorite";
+import { useBattle } from "../../constants/BattleContext";
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +21,7 @@ export default function PokemonDetailScreen() {
   
   const { data: pokemon, isLoading, error } = usePokemonById(realId || "");
   const { data: evolutionChain, isLoading: evolutionLoading } = useEvolutionChain(pokemon?.id || 0);
+  const { startBattle } = useBattle();
 
   const tabs: TabType[] = ['about', 'stats', 'evolution'];
   const scrollViewRef = useRef<ScrollView>(null);
@@ -233,6 +235,18 @@ export default function PokemonDetailScreen() {
 
       {/* White content area with tabs */}
       <View style={styles.contentSection}>
+        {/* Battle Button */}
+        <TouchableOpacity 
+          style={styles.battleButton}
+          onPress={() => {
+            startBattle(pokemon);
+            router.push('/battle');
+          }}
+        >
+          <Ionicons name="flash" size={20} color="#fff" />
+          <Text style={styles.battleButtonText}>Battle This Pokémon!</Text>
+        </TouchableOpacity>
+
         {/* Tab Navigation */}
         <View style={styles.tabNavigation}>
           {tabs.map((tab, index) => (
@@ -519,5 +533,32 @@ const styles = StyleSheet.create({
   },
   evolutionArrow: {
     marginHorizontal: 5,
+  },
+  
+  // Battle Button
+  battleButton: {
+    backgroundColor: '#FF6B35',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginHorizontal: 16,
+    marginBottom: 20,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  battleButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
