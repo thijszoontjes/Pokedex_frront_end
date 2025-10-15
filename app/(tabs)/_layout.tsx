@@ -1,11 +1,14 @@
 import { Tabs } from "expo-router";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
+import { useLocalization } from "../../constants/LocalizationContext";
 
 const ACTIVE = "#6E44FF";
 const INACTIVE = "#94A3B8";
 
 export default function TabsLayout() {
+  const { t } = useLocalization();
+  
   return (
     <Tabs
       screenOptions={{
@@ -47,7 +50,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Pokémons",
+          title: t('nav.home'),
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons
               name="pokeball"
@@ -63,7 +66,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="favorites"
         options={{
-          title: "Favorites",
+          title: t('nav.favorites'),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "heart" : "heart-outline"}
@@ -79,7 +82,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: t('nav.settings'),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "settings" : "settings-outline"}

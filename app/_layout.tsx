@@ -12,6 +12,7 @@ import { useColorScheme } from "../components/useColorScheme";
 import { databaseService } from "./services/database";
 import { ThemeProvider } from "../constants/ThemeContext";
 import { BattleProvider } from "../constants/BattleContext";
+import { LocalizationProvider } from "../constants/LocalizationContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -70,21 +71,24 @@ function RootLayoutNav() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <BattleProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
-                <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-                <Stack.Screen name="battle" options={{ headerShown: false, presentation: "fullScreenModal" }} />
-              </Stack>
-            </NavigationThemeProvider>
-          </QueryClientProvider>
-        </BattleProvider>
-      </ThemeProvider>
+      <LocalizationProvider>
+        <ThemeProvider>
+          <BattleProvider>
+            <QueryClientProvider client={queryClient}>
+              <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="pokemon/[name]" options={{ headerShown: false }} />
+                  <Stack.Screen name="pokemon/[id]" options={{ headerShown: false }} />
+                  <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+                  <Stack.Screen name="battle" options={{ headerShown: false, presentation: "fullScreenModal" }} />
+                  <Stack.Screen name="battle-test" options={{ headerShown: false }} />
+                </Stack>
+              </NavigationThemeProvider>
+            </QueryClientProvider>
+          </BattleProvider>
+        </ThemeProvider>
+      </LocalizationProvider>
     </SafeAreaProvider>
   );
 }

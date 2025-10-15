@@ -5,10 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../constants/ThemeContext';
+import { useLocalization, Language } from '../../constants/LocalizationContext';
 
 type ThemeOption = {
   key: 'light' | 'dark' | 'system';
@@ -19,6 +21,7 @@ type ThemeOption = {
 
 export default function SettingsTabScreen() {
   const { theme, themeMode, setThemeMode, isDark } = useTheme();
+  const { language, setLanguage, t } = useLocalization();
 
   const themeOptions: ThemeOption[] = [
     {
@@ -50,15 +53,68 @@ export default function SettingsTabScreen() {
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
-          Settings
+          {t('settings.title')}
         </Text>
       </View>
 
       <ScrollView style={styles.content}>
+        {/* Language Section */}
+        <View style={[styles.section, { backgroundColor: theme.colors.panel, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            � {t('settings.language')}
+          </Text>
+          <Text style={[styles.sectionSubtitle, { color: theme.colors.subtext }]}>
+            Choose your preferred language
+          </Text>
+
+          <TouchableOpacity
+            style={[styles.languageOption, { borderColor: theme.colors.border }]}
+            onPress={() => {
+              Alert.alert(
+                t('settings.language'),
+                'Choose your preferred language / Kies je voorkeurstaal',
+                [
+                  {
+                    text: 'English',
+                    onPress: () => setLanguage('en' as Language),
+                  },
+                  {
+                    text: 'Nederlands',
+                    onPress: () => setLanguage('nl' as Language),
+                  },
+                  {
+                    text: t('common.cancel'),
+                    style: 'cancel',
+                  },
+                ]
+              );
+            }}
+          >
+            <View style={styles.optionLeft}>
+              <View style={[styles.optionIcon, { backgroundColor: theme.colors.bg }]}>
+                <Ionicons 
+                  name="language" 
+                  size={22} 
+                  color={theme.colors.primary} 
+                />
+              </View>
+              <View style={styles.optionContent}>
+                <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
+                  {language === 'en' ? 'English' : 'Nederlands'}
+                </Text>
+                <Text style={[styles.optionSubtitle, { color: theme.colors.subtext }]}>
+                  {language === 'en' ? 'App language' : 'App taal'}
+                </Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.subtext} />
+          </TouchableOpacity>
+        </View>
+
         {/* Theme Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.panel, borderColor: theme.colors.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            🎨 Appearance
+            🎨 {t('settings.theme')}
           </Text>
           <Text style={[styles.sectionSubtitle, { color: theme.colors.subtext }]}>
             Choose how the app looks on your device
@@ -197,6 +253,13 @@ const styles = StyleSheet.create({
   },
   lastOptionItem: {
     borderBottomWidth: 0,
+  },
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
   },
   optionLeft: {
     flexDirection: 'row',

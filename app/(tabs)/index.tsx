@@ -2,6 +2,7 @@ import { ActivityIndicator, StyleSheet, Text, View, Alert, TouchableOpacity } fr
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { useTheme } from "@/constants/ThemeContext";
+import { useLocalization } from "@/constants/LocalizationContext";
 import SearchBar from "@/components/ui/search-bar";
 import InfinitePokemonList from "../../components/ui/infinite-pokemon-list";
 import { useInfinitePokemons } from "../hooks/use-pokemon";
@@ -10,6 +11,7 @@ import { router } from "expo-router";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
+  const { t } = useLocalization();
   const styles = createStyles(theme);
   const [query, setQuery] = useState("");
   
@@ -35,9 +37,9 @@ export default function HomeScreen() {
     });
     
     Alert.alert(
-      "Added to Favorites! ❤️",
+      t('favorites.added'),
       `${pokemon.name} has been added to your favorites.`,
-      [{ text: "OK" }]
+      [{ text: t('common.ok') }]
     );
   };
 
@@ -52,7 +54,7 @@ export default function HomeScreen() {
       <SafeAreaView style={styles.safe}>
         <View style={styles.center}>
           <ActivityIndicator size="large" />
-          <Text style={styles.sub}>Loading Pokémon…</Text>
+          <Text style={styles.sub}>{t('home.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -62,9 +64,9 @@ export default function HomeScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.center}>
-          <Text style={styles.title}>Error</Text>
+          <Text style={styles.title}>{t('home.error')}</Text>
           <Text style={styles.sub}>
-            {error instanceof Error ? error.message : "Failed to load data"}
+            {error instanceof Error ? error.message : t('home.errorMessage')}
           </Text>
         </View>
       </SafeAreaView>
@@ -77,25 +79,25 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <SearchBar value={query} onChangeText={setQuery} placeholder="Search for Pokémon.." />
+      <SearchBar value={query} onChangeText={setQuery} placeholder={t('home.search.placeholder')} />
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>All Pokémon</Text>
+        <Text style={styles.title}>{t('home.title')}</Text>
         {!query && (
           <Text style={styles.subtitle}>
-            {totalLoaded} of {totalCount} loaded
+            {totalLoaded} of {totalCount} {t('home.loaded')}
           </Text>
         )}
       </View>
       
       {/* Battle Test Button */}
-      <View style={styles.battleTestContainer}>
+      {/* <View style={styles.battleTestContainer}>
         <TouchableOpacity 
           style={styles.battleTestButton}
           onPress={() => router.push('/battle-test')}
         >
-          <Text style={styles.battleTestText}>🎮 Test Battle System</Text>
+          <Text style={styles.battleTestText}>{t('home.battleTest')}</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       
       <InfinitePokemonList
         data={data?.pages?.map(page => page.results) || []}

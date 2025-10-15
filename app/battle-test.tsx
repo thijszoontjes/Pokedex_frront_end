@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useBattle } from '../constants/BattleContext';
 import { useTheme } from '../constants/ThemeContext';
+import { useLocalization } from '../constants/LocalizationContext';
 
 // Test Pokemon data
 const testPikachu = {
@@ -33,16 +34,17 @@ const testPikachu = {
 export default function BattleTestScreen() {
   const { theme } = useTheme();
   const { startBattle } = useBattle();
+  const { t } = useLocalization();
   const styles = createStyles(theme);
 
   const handleStartTestBattle = () => {
     Alert.alert(
-      'Start Battle',
-      'Start a test battle with Pikachu?',
+      t('battle.test.start'),
+      t('battle.test.description'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Battle!',
+          text: t('battle.test.start'),
           onPress: () => {
             startBattle(testPikachu);
             router.push('/battle');
@@ -56,18 +58,18 @@ export default function BattleTestScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
       <View style={styles.content}>
         <Text style={[styles.title, { color: theme.colors.text }]}>
-          🎮 Battle Test
+          {t('battle.test.title')}
         </Text>
         
         <Text style={[styles.description, { color: theme.colors.subtext }]}>
-          Test the complete Pokémon Battle System with a quick Pikachu battle!
+          {t('battle.test.description')}
         </Text>
 
         <TouchableOpacity 
           style={styles.battleButton}
           onPress={handleStartTestBattle}
         >
-          <Text style={styles.battleButtonText}>⚡ Start Test Battle</Text>
+          <Text style={styles.battleButtonText}>{t('battle.test.start')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -75,13 +77,13 @@ export default function BattleTestScreen() {
           onPress={() => router.back()}
         >
           <Text style={[styles.backButtonText, { color: theme.colors.text }]}>
-            ← Back to Home
+            {t('battle.test.back')}
           </Text>
         </TouchableOpacity>
 
         <View style={styles.features}>
           <Text style={[styles.featuresTitle, { color: theme.colors.text }]}>
-            Battle System Features:
+            {t('battle.test.features')}
           </Text>
           <Text style={[styles.feature, { color: theme.colors.subtext }]}>
             • Turn-based combat system
