@@ -1,7 +1,8 @@
-import { Image, Pressable, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View, TouchableOpacity, Animated } from "react-native";
+import { useState, useRef } from "react";
 import { theme } from "@/constants/theme";
 import PokemonActionSheet from "./pokemon-action-sheet";
+import { useScale } from "../../constants/AnimationHooks";
 
 type Props = {
   id: number;
@@ -14,6 +15,10 @@ type Props = {
 export default function PokeCard({ id, name, imageUri, onPress, onAddToFavorites }: Props) {
   const label = String(id).padStart(3, "0");
   const [showActionSheet, setShowActionSheet] = useState(false);
+  
+  // Animation hooks
+  const scaleAnimation = useScale(500, Math.random() * 300); // Random delay for staggered effect
+  const pressAnimation = useRef(new Animated.Value(1)).current;
 
   const handleDotsPress = () => {
     setShowActionSheet(true);
@@ -25,24 +30,47 @@ export default function PokeCard({ id, name, imageUri, onPress, onAddToFavorites
     }
   };
 
+  const handlePressIn = () => {
+    Animated.spring(pressAnimation, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(pressAnimation, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
     <>
-      <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && { opacity: 0.9 }]}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{label}</Text>
-        </View>
+      <Animated.View style={[scaleAnimation]}>
+        <Pressable 
+          onPress={onPress} 
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={({ pressed }) => [styles.card, pressed && { opacity: 0.9 }]}
+        >
+          <Animated.View style={{ transform: [{ scale: pressAnimation }] }}>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{label}</Text>
+            </View>
 
-        <View style={styles.imageWrap}>
-          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-        </View>
+            <View style={styles.imageWrap}>
+              <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+            </View>
 
-        <View style={styles.bottom}>
-          <Text numberOfLines={1} style={styles.name}>{name}</Text>
-          <TouchableOpacity onPress={handleDotsPress} style={styles.dotsButton}>
-            <Text style={styles.dots}>⋮</Text>
-          </TouchableOpacity>
-        </View>
-      </Pressable>
+            <View style={styles.bottom}>
+              <Text numberOfLines={1} style={styles.name}>{name}</Text>
+              <TouchableOpacity onPress={handleDotsPress} style={styles.dotsButton}>
+                <Text style={styles.dots}>⋮</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </Pressable>
+      </Animated.View>
 
       <PokemonActionSheet
         visible={showActionSheet}

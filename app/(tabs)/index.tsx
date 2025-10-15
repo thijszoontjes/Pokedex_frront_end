@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View, Alert, TouchableOpacity } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, Alert, TouchableOpacity, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { useTheme } from "@/constants/ThemeContext";
@@ -8,12 +8,18 @@ import InfinitePokemonList from "../../components/ui/infinite-pokemon-list";
 import { useInfinitePokemons } from "../hooks/use-pokemon";
 import { useToggleFavorite } from "../hooks/use-favorites";
 import { router } from "expo-router";
+import AnimatedLoading from "../../components/ui/animated-loading";
+import { useFadeIn, useSlideIn } from "../../constants/AnimationHooks";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
   const { t } = useLocalization();
   const styles = createStyles(theme);
   const [query, setQuery] = useState("");
+
+  // Animation hooks
+  const fadeAnimation = useFadeIn(600);
+  const slideAnimation = useSlideIn('up', 800, 200);
   
   // Use infinite query instead of regular query
   const {
@@ -52,10 +58,10 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.safe}>
-        <View style={styles.center}>
-          <ActivityIndicator size="large" />
-          <Text style={styles.sub}>{t('home.loading')}</Text>
-        </View>
+        <AnimatedLoading 
+          type="pokeball" 
+          message={t('home.loading')}
+        />
       </SafeAreaView>
     );
   }
@@ -79,15 +85,18 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <SearchBar value={query} onChangeText={setQuery} placeholder={t('home.search.placeholder')} />
-      <View style={styles.titleContainer}>
+      <Animated.View style={fadeAnimation}>
+        <SearchBar value={query} onChangeText={setQuery} placeholder={t('home.search.placeholder')} />
+      </Animated.View>
+      
+      <Animated.View style={[styles.titleContainer, slideAnimation]}>
         <Text style={styles.title}>{t('home.title')}</Text>
         {!query && (
           <Text style={styles.subtitle}>
             {totalLoaded} of {totalCount} {t('home.loaded')}
           </Text>
         )}
-      </View>
+      </Animated.View>
       
       {/* Battle Test Button */}
       {/* <View style={styles.battleTestContainer}>

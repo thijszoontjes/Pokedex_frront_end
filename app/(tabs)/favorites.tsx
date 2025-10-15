@@ -1,15 +1,23 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFavorites } from "../hooks/use-favorites";
 import PokemonList from "../../components/ui/pokemon-list";
 import { router } from "expo-router";
 import { useTheme } from "@/constants/ThemeContext";
+import { useLocalization } from "@/constants/LocalizationContext";
+import AnimatedLoading from "../../components/ui/animated-loading";
+import { useFadeIn, useSlideIn } from "../../constants/AnimationHooks";
 
 
 export default function FavoritesScreen() {
   const { theme } = useTheme();
+  const { t } = useLocalization();
   const styles = createStyles(theme);
   const { data: favorites, isLoading, error } = useFavorites();
+
+  // Animation hooks
+  const headerAnimation = useFadeIn(600);
+  const contentAnimation = useSlideIn('up', 800, 200);
 
   // Transform favorites data to match PokemonList expected format
   const listData = (favorites || []).map(fav => ({
@@ -21,8 +29,10 @@ export default function FavoritesScreen() {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}><Text style={styles.title}>My Favorites</Text></View>
-        <View style={styles.center}><ActivityIndicator size="large" /><Text>Loading favorites…</Text></View>
+        <AnimatedLoading 
+          type="dots" 
+          message="Loading favorites..." 
+        />
       </SafeAreaView>
     );
   }
@@ -41,18 +51,20 @@ export default function FavoritesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My Favorites</Text>
+      <Animated.View style={[styles.header, headerAnimation]}>
+        <Text style={styles.title}>{t('favorites.title')}</Text>
         <Text style={styles.subtitle}>{favorites.length} saved</Text>
-      </View>
-      <PokemonList
-        data={listData}
-        onPressItem={(item) => router.push(`/pokemon/${item.id}`)}
-        onAddToFavorites={(item) => {
-          // This would actually remove from favorites since it's already a favorite
-          console.log("Pokemon is already in favorites:", item.name);
-        }}
-      />
+      </Animated.View>
+      <Animated.View style={contentAnimation}>
+        <PokemonList
+          data={listData}
+          onPressItem={(item) => router.push(`/pokemon/${item.id}`)}
+          onAddToFavorites={(item) => {
+            // This would actually remove from favorites since it's already a favorite
+            console.log("Pokemon is already in favorites:", item.name);
+          }}
+        />
+      </Animated.View>
     </SafeAreaView>
   );
 }

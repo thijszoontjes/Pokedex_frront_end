@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity, Dimensions } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useRef } from "react";
@@ -8,6 +8,8 @@ import { useEvolutionChain } from "../hooks/use-evolution";
 import { PokemonImage } from "../../components/ui/pokemon-image";
 import Favorite from "../../components/ui/favorite";
 import { useBattle } from "../../constants/BattleContext";
+import AnimatedLoading from "../../components/ui/animated-loading";
+import { useFadeIn, useSlideIn, useScale } from "../../constants/AnimationHooks";
 
 const { width } = Dimensions.get('window');
 
@@ -25,6 +27,12 @@ export default function PokemonDetailScreen() {
 
   const tabs: TabType[] = ['about', 'stats', 'evolution'];
   const scrollViewRef = useRef<ScrollView>(null);
+
+  // Animation hooks
+  const headerAnimation = useFadeIn(600);
+  const imageAnimation = useScale(800, 300);
+  const contentAnimation = useSlideIn('up', 600, 400);
+  const battleButtonAnimation = useSlideIn('up', 500, 600);
 
   const changeTab = (index: number) => {
     setCurrentTabIndex(index);
@@ -59,10 +67,10 @@ export default function PokemonDetailScreen() {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#5631E8" />
-          <Text style={styles.loadingText}>Loading Pokémon...</Text>
-        </View>
+        <AnimatedLoading 
+          type="pulse" 
+          message="Loading Pokémon..." 
+        />
       </SafeAreaView>
     );
   }
@@ -197,7 +205,7 @@ export default function PokemonDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header with background color based on Pokemon type */}
-      <View style={[styles.headerSection, { backgroundColor: typeColor }]}>
+      <View style={[{ backgroundColor: typeColor, flex: 1 }]}>
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -236,16 +244,20 @@ export default function PokemonDetailScreen() {
       {/* White content area with tabs */}
       <View style={styles.contentSection}>
         {/* Battle Button */}
-        <TouchableOpacity 
-          style={styles.battleButton}
-          onPress={() => {
-            startBattle(pokemon);
-            router.push('/battle');
-          }}
-        >
-          <Ionicons name="flash" size={20} color="#fff" />
-          <Text style={styles.battleButtonText}>Battle This Pokémon!</Text>
-        </TouchableOpacity>
+        <Animated.View style={battleButtonAnimation}>
+          <TouchableOpacity 
+            style={styles.battleButton}
+            onPress={() => {
+              if (pokemon) {
+                startBattle(pokemon);
+                router.push('/battle');
+              }
+            }}
+          >
+            <Ionicons name="flash" size={20} color="#fff" />
+            <Text style={styles.battleButtonText}>Battle This Pokémon!</Text>
+          </TouchableOpacity>
+        </Animated.View>
 
         {/* Tab Navigation */}
         <View style={styles.tabNavigation}>
