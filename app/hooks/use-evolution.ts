@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { PokeApiService } from "../services/pokemon-api";
 
 export interface EvolutionChainStep {
   id: number;
@@ -95,7 +94,7 @@ export const useEvolutionChain = (speciesId: number) =>
         );
         
         return uniqueEvolutions;
-      } catch (error) {
+      } catch (_error) {
         // Error fetching evolution chain
         return [];
       }

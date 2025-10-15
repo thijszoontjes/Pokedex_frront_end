@@ -33,7 +33,7 @@ export default function PokemonActionSheet({
       if (result.action === Share.sharedAction) {
         // Pokemon shared successfully
       }
-    } catch (error) {
+    } catch (_error) {
       // Error occurred during sharing
       Alert.alert("Error", "Failed to share Pokemon");
     }

@@ -20,10 +20,14 @@ export default function AnimatedLoading({
   const { t } = useLocalization();
   const styles = createStyles(theme);
 
-  const renderPokeballLoader = () => {
-    const rotateAnimation = useRotate(2000);
-    const pulseAnimation = usePulse(1500);
+  // All hooks must be called at the top level
+  const rotateAnimation = useRotate(2000);
+  const pulseAnimation = usePulse(1500);
+  const pulseAnimation2 = usePulse(800);
+  const dotAnimations = useStaggeredAnimation(3, 400, 200);
+  const barAnimations = useStaggeredAnimation(4, 600, 150);
 
+  const renderPokeballLoader = () => {
     return (
       <View style={styles.pokeballContainer}>
         <Animated.View style={[styles.pokeballOuter, pulseAnimation]}>
@@ -40,8 +44,6 @@ export default function AnimatedLoading({
   };
 
   const renderDotLoader = () => {
-    const dotAnimations = useStaggeredAnimation(3, 400, 200);
-
     return (
       <View style={styles.dotsContainer}>
         {dotAnimations.map((animation, index) => (
@@ -55,18 +57,14 @@ export default function AnimatedLoading({
   };
 
   const renderPulseLoader = () => {
-    const pulseAnimation = usePulse(800);
-
     return (
-      <Animated.View style={[styles.pulseCircle, { borderColor: theme.colors.primary }, pulseAnimation]}>
+      <Animated.View style={[styles.pulseCircle, { borderColor: theme.colors.primary }, pulseAnimation2]}>
         <View style={[styles.pulseInner, { backgroundColor: theme.colors.primary }]} />
       </Animated.View>
     );
   };
 
   const renderBarsLoader = () => {
-    const barAnimations = useStaggeredAnimation(4, 600, 150);
-
     return (
       <View style={styles.barsContainer}>
         {barAnimations.map((animation, index) => (

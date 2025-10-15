@@ -16,8 +16,6 @@ import { router } from 'expo-router';
 import { useBattle, BattleMove } from '../constants/BattleContext';
 import { useTheme } from '../constants/ThemeContext';
 
-const { width, height } = Dimensions.get('window');
-
 // Simple animated progress bar component
 const ProgressBar: React.FC<{
   current: number;
@@ -70,7 +68,7 @@ const progressBarStyles = StyleSheet.create({
 export default function BattleScreen() {
   const { theme } = useTheme();
   const styles = createStyles(theme);
-  const { battleState, useMove, endBattle } = useBattle();
+  const { battleState, useMove } = useBattle();
   
   const [shakeAnimation] = useState(new Animated.Value(0));
   const [flashAnimation] = useState(new Animated.Value(0));
@@ -118,10 +116,11 @@ export default function BattleScreen() {
           if (availableMoves.length > 0) {
             const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
             // Enemy using selected move
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             useMove(randomMove, 'enemy');
             triggerBattleAnimation();
           }
-        } catch (error) {
+        } catch (_error) {
           // Enemy turn error occurred
         } finally {
           isProcessingTurnRef.current = false;
@@ -155,9 +154,10 @@ export default function BattleScreen() {
   const handlePlayerMove = (move: BattleMove) => {
     if (currentTurn === 'player' && !isAnimating && !isProcessingTurnRef.current) {
       try {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         useMove(move, 'player');
         triggerBattleAnimation();
-      } catch (error) {
+      } catch (_error) {
         // Player move error occurred
       }
     }
