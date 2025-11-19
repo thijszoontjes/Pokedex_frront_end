@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { View, FlatList, StyleSheet, ActivityIndicator, Text } from "react-native";
 import { useTheme } from "@/constants/ThemeContext";
 import PokeCard from "./poke-card";
 import { PokemonWithId } from "../../app/hooks/use-pokemon";
+import { rubikFontFamily } from "@/constants/fonts";
 
 type Item = { id: number; name: string; image: string };
 
@@ -147,7 +148,7 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   footerText: {
     marginTop: theme.space.sm,
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: rubikFontFamily.medium,
   },
   emptyContainer: {
     flex: 1,
@@ -157,7 +158,7 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: rubikFontFamily.bold,
     marginBottom: theme.space.xs,
   },
   emptySubtitle: {

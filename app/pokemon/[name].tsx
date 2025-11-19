@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity, Dimensions } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -7,8 +7,7 @@ import { usePokemonByName } from "../hooks/use-pokemon";
 import { useEvolutionChain } from "../hooks/use-evolution";
 import { PokemonImage } from "../../components/ui/pokemon-image";
 import Favorite from "../../components/ui/favorite";
-
-const { width } = Dimensions.get('window');
+import { rubikFontFamily } from "@/constants/fonts";
 
 type TabType = 'about' | 'stats' | 'evolution';
 
@@ -262,7 +261,7 @@ const styles = StyleSheet.create({
   },
   pokemonName: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     color: "#fff",
     textAlign: "center",
   },
@@ -284,7 +283,7 @@ const styles = StyleSheet.create({
   },
   typeText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     textTransform: "capitalize",
     fontSize: 14,
   },
@@ -322,11 +321,11 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: "#666",
-    fontWeight: "500",
+    fontFamily: rubikFontFamily.medium,
   },
   activeTabText: {
     color: "#5631E8",
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
   },
   
   // Tab Content
@@ -351,12 +350,12 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 16,
     color: "#666",
-    fontWeight: "500",
+    fontFamily: rubikFontFamily.medium,
   },
   infoValue: {
     fontSize: 16,
     color: "#333",
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
     textTransform: "capitalize",
   },
   infoValueContainer: {
@@ -372,7 +371,7 @@ const styles = StyleSheet.create({
   typeTextSmall: {
     color: "#fff",
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
   },
   
   // Stats Tab
@@ -385,14 +384,14 @@ const styles = StyleSheet.create({
   statName: {
     fontSize: 14,
     color: "#666",
-    fontWeight: "500",
+    fontFamily: rubikFontFamily.medium,
     width: 80,
     textTransform: "capitalize",
   },
   statValue: {
     fontSize: 16,
     color: "#333",
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     width: 40,
     textAlign: "right",
     marginRight: 10,
@@ -413,7 +412,7 @@ const styles = StyleSheet.create({
   // Evolution
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     color: "#333",
     marginBottom: 16,
   },
@@ -431,7 +430,7 @@ const styles = StyleSheet.create({
   evolutionNote: {
     fontSize: 14,
     color: "#999",
-    fontStyle: "italic",
+    fontFamily: rubikFontFamily.italic,
   },
   evolutionScroll: {
     paddingVertical: 10,
@@ -451,7 +450,7 @@ const styles = StyleSheet.create({
   },
   evolutionName: {
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
     color: "#333",
     marginTop: 5,
     textAlign: "center",

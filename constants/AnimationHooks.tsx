@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Animated, Easing } from 'react-native';
 
 // Custom hooks for different animation types
@@ -164,7 +164,7 @@ export function useStaggeredAnimation(count: number, duration = 300, staggerDela
     }))
   ).current;
 
-  const startAnimation = () => {
+  const startAnimation = useCallback(() => {
     const animationSequence = animations.map((anim, index) =>
       Animated.parallel([
         Animated.timing(anim.opacity, {
@@ -185,11 +185,11 @@ export function useStaggeredAnimation(count: number, duration = 300, staggerDela
     );
 
     Animated.parallel(animationSequence).start();
-  };
+  }, [animations, duration, staggerDelay]);
 
   useEffect(() => {
     startAnimation();
-  }, []);
+  }, [startAnimation]);
 
   return animations.map(anim => ({
     opacity: anim.opacity,

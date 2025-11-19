@@ -9,7 +9,8 @@ import { PokemonImage } from "../../components/ui/pokemon-image";
 import Favorite from "../../components/ui/favorite";
 import { useBattle } from "../../constants/BattleContext";
 import AnimatedLoading from "../../components/ui/animated-loading";
-import { useFadeIn, useSlideIn, useScale } from "../../constants/AnimationHooks";
+import { useSlideIn } from "../../constants/AnimationHooks";
+import { rubikFontFamily } from "@/constants/fonts";
 
 const { width } = Dimensions.get('window');
 
@@ -29,9 +30,6 @@ export default function PokemonDetailScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Animation hooks
-  const headerAnimation = useFadeIn(600);
-  const imageAnimation = useScale(800, 300);
-  const contentAnimation = useSlideIn('up', 600, 400);
   const battleButtonAnimation = useSlideIn('up', 500, 600);
 
   const changeTab = (index: number) => {
@@ -181,15 +179,6 @@ export default function PokemonDetailScreen() {
     );
   };
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'about': return renderAboutTab();
-      case 'stats': return renderStatsTab();
-      case 'evolution': return renderEvolutionTab();
-      default: return renderAboutTab();
-    }
-  };
-
   const renderTabContentByType = (tab: TabType) => {
     switch (tab) {
       case 'about': return renderAboutTab();
@@ -284,7 +273,7 @@ export default function PokemonDetailScreen() {
           style={styles.tabContentWrapper}
           contentContainerStyle={styles.tabContentSlider}
         >
-          {tabs.map((tab, index) => (
+          {tabs.map((tab) => (
             <View key={tab} style={styles.tabContentPage}>
               <ScrollView style={styles.tabContentContainer} showsVerticalScrollIndicator={false}>
                 {renderTabContentByType(tab)}
@@ -333,7 +322,7 @@ const styles = StyleSheet.create({
   },
   pokemonName: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     color: "#fff",
     textAlign: "center",
   },
@@ -355,7 +344,7 @@ const styles = StyleSheet.create({
   },
   typeText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     textTransform: "capitalize",
     fontSize: 14,
   },
@@ -393,11 +382,11 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: "#666",
-    fontWeight: "500",
+    fontFamily: rubikFontFamily.medium,
   },
   activeTabText: {
     color: "#5631E8",
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
   },
   
   // Swipeable Tab Content
@@ -433,12 +422,12 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 16,
     color: "#666",
-    fontWeight: "500",
+    fontFamily: rubikFontFamily.medium,
   },
   infoValue: {
     fontSize: 16,
     color: "#333",
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
     textTransform: "capitalize",
   },
   infoValueContainer: {
@@ -454,7 +443,7 @@ const styles = StyleSheet.create({
   typeTextSmall: {
     color: "#fff",
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
   },
   
   // Stats Tab
@@ -467,14 +456,14 @@ const styles = StyleSheet.create({
   statName: {
     fontSize: 14,
     color: "#666",
-    fontWeight: "500",
+    fontFamily: rubikFontFamily.medium,
     width: 80,
     textTransform: "capitalize",
   },
   statValue: {
     fontSize: 16,
     color: "#333",
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     width: 40,
     textAlign: "right",
     marginRight: 10,
@@ -495,7 +484,7 @@ const styles = StyleSheet.create({
   // Evolution
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     color: "#333",
     marginBottom: 16,
   },
@@ -513,7 +502,7 @@ const styles = StyleSheet.create({
   evolutionNote: {
     fontSize: 14,
     color: "#999",
-    fontStyle: "italic",
+    fontFamily: rubikFontFamily.italic,
   },
   evolutionScroll: {
     paddingVertical: 10,
@@ -533,7 +522,7 @@ const styles = StyleSheet.create({
   },
   evolutionName: {
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
     color: "#333",
     marginTop: 5,
     textAlign: "center",
@@ -570,7 +559,7 @@ const styles = StyleSheet.create({
   battleButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     marginLeft: 8,
   },
 });

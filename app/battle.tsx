@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  Dimensions,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useBattle, BattleMove } from '../constants/BattleContext';
 import { useTheme } from '../constants/ThemeContext';
+import { rubikFontFamily } from '@/constants/fonts';
 
 // Simple animated progress bar component
 const ProgressBar: React.FC<{
@@ -31,7 +31,7 @@ const ProgressBar: React.FC<{
       duration: 800,
       useNativeDriver: false,
     }).start();
-  }, [current, max]);
+  }, [animatedWidth, current, max]);
 
   return (
     <View style={[progressBarStyles.container, { backgroundColor }]}>
@@ -67,13 +67,29 @@ const progressBarStyles = StyleSheet.create({
 
 export default function BattleScreen() {
   const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles();
   const { battleState, useMove } = useBattle();
   
   const [shakeAnimation] = useState(new Animated.Value(0));
   const [flashAnimation] = useState(new Animated.Value(0));
   const isProcessingTurnRef = useRef(false);
   const [turnDisplay, setTurnDisplay] = useState('');
+
+  const triggerBattleAnimation = useCallback(() => {
+    // Shake animation for impact
+    Animated.sequence([
+      Animated.timing(shakeAnimation, { toValue: 10, duration: 50, useNativeDriver: true }),
+      Animated.timing(shakeAnimation, { toValue: -10, duration: 50, useNativeDriver: true }),
+      Animated.timing(shakeAnimation, { toValue: 10, duration: 50, useNativeDriver: true }),
+      Animated.timing(shakeAnimation, { toValue: 0, duration: 50, useNativeDriver: true }),
+    ]).start();
+
+    // Flash animation for damage
+    Animated.sequence([
+      Animated.timing(flashAnimation, { toValue: 0.8, duration: 100, useNativeDriver: true }),
+      Animated.timing(flashAnimation, { toValue: 0, duration: 100, useNativeDriver: true }),
+    ]).start();
+  }, [flashAnimation, shakeAnimation]);
 
   const { playerPokemon, enemyPokemon, currentTurn, battlePhase, battleLog, isAnimating } = battleState;
 
@@ -120,7 +136,7 @@ export default function BattleScreen() {
             useMove(randomMove, 'enemy');
             triggerBattleAnimation();
           }
-        } catch (_error) {
+        } catch {
           // Enemy turn error occurred
         } finally {
           isProcessingTurnRef.current = false;
@@ -133,23 +149,7 @@ export default function BattleScreen() {
         isProcessingTurnRef.current = false;
       };
     }
-  }, [currentTurn, battlePhase, enemyPokemon?.id, isAnimating]);
-
-  const triggerBattleAnimation = () => {
-    // Shake animation for impact
-    Animated.sequence([
-      Animated.timing(shakeAnimation, { toValue: 10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: -10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: 10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: 0, duration: 50, useNativeDriver: true }),
-    ]).start();
-
-    // Flash animation for damage
-    Animated.sequence([
-      Animated.timing(flashAnimation, { toValue: 0.8, duration: 100, useNativeDriver: true }),
-      Animated.timing(flashAnimation, { toValue: 0, duration: 100, useNativeDriver: true }),
-    ]).start();
-  };
+  }, [battlePhase, currentTurn, enemyPokemon, isAnimating, triggerBattleAnimation, useMove]);
 
   const handlePlayerMove = (move: BattleMove) => {
     if (currentTurn === 'player' && !isAnimating && !isProcessingTurnRef.current) {
@@ -157,7 +157,7 @@ export default function BattleScreen() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useMove(move, 'player');
         triggerBattleAnimation();
-      } catch (_error) {
+      } catch {
         // Player move error occurred
       }
     }
@@ -385,7 +385,7 @@ export default function BattleScreen() {
   );
 }
 
-const createStyles = (theme: ReturnType<typeof import('../constants/theme').createTheme>) => StyleSheet.create({
+const createStyles = () => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -396,7 +396,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   header: {
     flexDirection: 'row',
@@ -416,7 +416,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     color: 'white',
   },
   placeholder: {
@@ -450,7 +450,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   pokemonName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     textTransform: 'capitalize',
   },
   pokemonLevel: {
@@ -495,7 +495,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   turnText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   actionButtons: {
     flex: 1,
@@ -516,7 +516,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   moveText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     textTransform: 'capitalize',
   },
   ppText: {
@@ -532,7 +532,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   runText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     marginLeft: 8,
   },
   waitingContainer: {
@@ -542,6 +542,6 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   waitingText: {
     fontSize: 16,
-    fontStyle: 'italic',
+    fontFamily: rubikFontFamily.italic,
   },
 });

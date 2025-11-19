@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../../constants/ThemeContext';
 import { useLocalization } from '../../constants/LocalizationContext';
 import { usePulse, useRotate, useStaggeredAnimation } from '../../constants/AnimationHooks';
+import { rubikFontFamily } from '@/constants/fonts';
 
 const { width } = Dimensions.get('window');
 
@@ -234,7 +235,7 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   },
   message: {
     fontSize: 18,
-    fontWeight: '600',
+    fontFamily: rubikFontFamily.semiBold,
     textAlign: 'center',
     marginBottom: 12,
   },

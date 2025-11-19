@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View, Animated } from "react-native";
+import { StyleSheet, Text, View, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFavorites } from "../hooks/use-favorites";
 import PokemonList from "../../components/ui/pokemon-list";
@@ -7,6 +7,7 @@ import { useTheme } from "@/constants/ThemeContext";
 import { useLocalization } from "@/constants/LocalizationContext";
 import AnimatedLoading from "../../components/ui/animated-loading";
 import { useFadeIn, useSlideIn } from "../../constants/AnimationHooks";
+import { rubikFontFamily } from "@/constants/fonts";
 
 
 export default function FavoritesScreen() {
@@ -59,7 +60,7 @@ export default function FavoritesScreen() {
         <PokemonList
           data={listData}
           onPressItem={(item) => router.push(`/pokemon/${item.id}`)}
-          onAddToFavorites={(item) => {
+          onAddToFavorites={(_item) => {
             // This would actually remove from favorites since it's already a favorite
             // Pokemon is already in favorites
           }}
@@ -78,7 +79,7 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   },
   title: { 
     fontSize: 22, 
-    fontWeight: "800", 
+    fontFamily: rubikFontFamily.extraBold, 
     color: theme.colors.text 
   },
   subtitle: { 
@@ -94,7 +95,7 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   },
   empty: { 
     fontSize: 18, 
-    fontWeight: "700", 
+    fontFamily: rubikFontFamily.bold, 
     color: theme.colors.subtext, 
     marginBottom: 8, 
     textAlign: "center" 

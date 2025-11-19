@@ -1,8 +1,9 @@
-import { ActivityIndicator, StyleSheet, Text, View, Alert, TouchableOpacity, Animated } from "react-native";
+import { StyleSheet, Text, View, Alert, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@/constants/ThemeContext";
 import { useLocalization } from "@/constants/LocalizationContext";
+import { rubikFontFamily } from "@/constants/fonts";
 import SearchBar from "@/components/ui/search-bar";
 import InfinitePokemonList from "../../components/ui/infinite-pokemon-list";
 import { useInfinitePokemons } from "../hooks/use-pokemon";
@@ -131,7 +132,7 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   },
   title: {
     fontSize: 22,
-    fontWeight: "800",
+    fontFamily: rubikFontFamily.extraBold,
     color: theme.colors.text,
   },
   subtitle: {
@@ -163,6 +164,6 @@ const createStyles = (theme: ReturnType<typeof import('../../constants/theme').c
   battleTestText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
 });

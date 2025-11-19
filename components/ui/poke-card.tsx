@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { theme } from "@/constants/theme";
 import PokemonActionSheet from "./pokemon-action-sheet";
 import { useScale } from "../../constants/AnimationHooks";
+import { rubikFontFamily } from "@/constants/fonts";
 
 type Props = {
   id: number;
@@ -77,7 +78,6 @@ export default function PokeCard({ id, name, imageUri, onPress, onAddToFavorites
         onClose={() => setShowActionSheet(false)}
         pokemonId={id}
         pokemonName={name}
-        imageUrl={imageUri}
         onOpenDetail={() => onPress?.()}
         onAddToFavorites={handleAddToFavorites}
       />
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     zIndex: 2,
   },
-  badgeText: { color: theme.colors.badgeText, fontSize: 11, fontWeight: "700" },
+  badgeText: { color: theme.colors.badgeText, fontSize: 11, fontFamily: rubikFontFamily.bold },
   imageWrap: { alignItems: "center", justifyContent: "center", height: 120, marginTop: 6, marginBottom: 8 },
   image: { width: "82%", height: "100%" },
   bottom: {
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     borderTopColor: theme.colors.border,
     paddingTop: 10,
   },
-  name: { color: theme.colors.text, fontSize: 15, fontWeight: "700", flex: 1, marginRight: 8 },
+  name: { color: theme.colors.text, fontSize: 15, fontFamily: rubikFontFamily.bold, flex: 1, marginRight: 8 },
   dotsButton: {
     padding: 4,
     borderRadius: 12,

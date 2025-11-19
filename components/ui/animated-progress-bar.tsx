@@ -54,7 +54,7 @@ export default function AnimatedProgressBar({
     } else {
       progressWidth.setValue((progress / 100) * width);
     }
-  }, [progress, animated, duration]);
+  }, [animated, animatedProgress, duration, progress, progressWidth]);
 
   const shimmerTranslateX = animatedProgress.interpolate({
     inputRange: [0, 1],

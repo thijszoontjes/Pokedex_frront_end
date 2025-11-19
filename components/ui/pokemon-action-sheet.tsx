@@ -2,13 +2,13 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Pressable, Alert, Share } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "@/constants/theme";
+import { rubikFontFamily } from "@/constants/fonts";
 
 type ActionSheetProps = {
   visible: boolean;
   onClose: () => void;
   pokemonId: number;
   pokemonName: string;
-  imageUrl: string;
   onOpenDetail: () => void;
   onAddToFavorites: () => void;
 };
@@ -18,7 +18,6 @@ export default function PokemonActionSheet({
   onClose,
   pokemonId,
   pokemonName,
-  imageUrl,
   onOpenDetail,
   onAddToFavorites,
 }: ActionSheetProps) {
@@ -33,7 +32,7 @@ export default function PokemonActionSheet({
       if (result.action === Share.sharedAction) {
         // Pokemon shared successfully
       }
-    } catch (_error) {
+    } catch {
       // Error occurred during sharing
       Alert.alert("Error", "Failed to share Pokemon");
     }
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
   },
   pokemonName: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: rubikFontFamily.bold,
     color: theme.colors.text,
   },
   pokemonId: {
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
     color: theme.colors.text,
   },
   actionSubtitle: {
@@ -186,7 +185,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: rubikFontFamily.semiBold,
     color: theme.colors.text,
   },
 });

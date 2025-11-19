@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useBattle } from '../constants/BattleContext';
 import { useTheme } from '../constants/ThemeContext';
+import { rubikFontFamily } from '@/constants/fonts';
 import type { Pokemon } from 'pokenode-ts';
 
 // Simple test Pokemon data - the battle system only needs basic properties
@@ -34,7 +35,7 @@ const testPikachu = {
 export default function BattleTestScreen() {
   const { theme } = useTheme();
   const { startBattle } = useBattle();
-  const styles = createStyles(theme);
+  const styles = createStyles();
 
   const handleStartTestBattle = () => {
     Alert.alert(
@@ -84,7 +85,7 @@ export default function BattleTestScreen() {
   );
 }
 
-const createStyles = (theme: ReturnType<typeof import('../constants/theme').createTheme>) => StyleSheet.create({
+const createStyles = () => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -96,7 +97,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -124,7 +125,7 @@ const createStyles = (theme: ReturnType<typeof import('../constants/theme').crea
   battleButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     textAlign: 'center',
   },
   backButton: {

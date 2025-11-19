@@ -10,7 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../constants/ThemeContext';
-import { useLocalization, Language } from '../../constants/LocalizationContext';
+import { useLocalization } from '../../constants/LocalizationContext';
+import { rubikFontFamily } from '@/constants/fonts';
 
 type ThemeOption = {
   key: 'light' | 'dark' | 'system';
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   content: {
     flex: 1,
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
     marginBottom: 8,
   },
   sectionSubtitle: {
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   },
   optionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: rubikFontFamily.semiBold,
     marginBottom: 2,
   },
   optionSubtitle: {
@@ -314,11 +315,11 @@ const styles = StyleSheet.create({
   },
   previewBadgeText: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   previewName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   previewSubtext: {
     fontSize: 14,
@@ -334,6 +335,6 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: rubikFontFamily.semiBold,
   },
 });

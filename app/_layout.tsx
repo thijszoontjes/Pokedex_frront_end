@@ -1,5 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -8,13 +9,14 @@ import { View } from "react-native";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 // let op: pas deze import aan naar relatieve paden als je geen alias gebruikt
-import { useColorScheme } from "../components/useColorScheme";
-import { databaseService } from "./services/database";
-import { ThemeProvider } from "../constants/ThemeContext";
 import { BattleProvider } from "../constants/BattleContext";
+import { ThemeProvider } from "../constants/ThemeContext";
+import { useColorScheme } from "../components/useColorScheme";
 import { LocalizationProvider } from "../constants/LocalizationContext";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import RubikVariable from "../assets/fonts/Rubik-Variable.ttf";
+import RubikItalicVariable from "../assets/fonts/Rubik-Italic-Variable.ttf";
+import { databaseService } from "./services/database";
+import { applyRubikFontDefaults, rubikFontFamily } from "../constants/fonts";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -34,9 +36,13 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
+    [rubikFontFamily.regular]: RubikVariable,
+    [rubikFontFamily.medium]: RubikVariable,
+    [rubikFontFamily.semiBold]: RubikVariable,
+    [rubikFontFamily.bold]: RubikVariable,
+    [rubikFontFamily.extraBold]: RubikVariable,
+    [rubikFontFamily.italic]: RubikItalicVariable,
   });
 
   useEffect(() => {
@@ -44,7 +50,10 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) SplashScreen.hideAsync();
+    if (loaded) {
+      applyRubikFontDefaults();
+      SplashScreen.hideAsync();
+    }
   }, [loaded]);
 
   if (!loaded) {

@@ -3,6 +3,7 @@ import { Platform, StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import { rubikFontFamily } from '@/constants/fonts';
 
 export default function ModalScreen() {
   return (
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   separator: {
     marginVertical: 30,

@@ -2,6 +2,7 @@ import { Link, Stack } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
+import { rubikFontFamily } from '@/constants/fonts';
 
 export default function NotFoundScreen() {
   return (
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: rubikFontFamily.bold,
   },
   link: {
     marginTop: 15,

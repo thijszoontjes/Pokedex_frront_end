@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { useLocalization } from "../../constants/LocalizationContext";
+import { rubikFontFamily } from "@/constants/fonts";
 
 const ACTIVE = "#6E44FF";
 const INACTIVE = "#94A3B8";
@@ -18,7 +19,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: INACTIVE,
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "700",
+          fontFamily: rubikFontFamily.bold,
           marginTop: 2,
           marginBottom: Platform.OS === "ios" ? -2 : 0,
         },
